@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import RestaurantCard from './RestaurantCard';
-import CategoryFilter from './CategoryFilter';
-import SearchBar from './SearchBar';
-import CartSidebar from './CartSidebar';
-import OrderStatus from './OrderStatus';
+import RestaurantCard from '../Restaurants/RestaurantCard';
+import CategoryFilter from '../common/CategoryFilter';
+import SearchBar from '../common/SearchBar';
+import CartSidebar from '../common/CartSidebar';
+import OrderStatus from '../common/OrderStatus';
 
 const Dashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -72,19 +72,17 @@ const Dashboard = () => {
   useEffect(() => {
     let result = restaurants;
     
-    // Фильтрация по категории
     if (selectedCategory !== 'Все') {
       result = result.filter(restaurant => 
-        restaurant.categories.includes(selectedCategory)
+        restaurant.cuisine === selectedCategory
       );
     }
     
-    // Фильтрация по поисковому запросу
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(restaurant => 
         restaurant.name.toLowerCase().includes(query) || 
-        restaurant.description.toLowerCase().includes(query)
+        restaurant.cuisine.toLowerCase().includes(query)
       );
     }
     
@@ -136,7 +134,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('userToken');
-    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userData');
     navigate('/login');
   };
 
@@ -187,8 +185,8 @@ const Dashboard = () => {
               </button>
               
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Профиль</a>
-                <a href="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Мои заказы</a>
+                <button onClick={() => navigate('/profile')} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Профиль</button>
+                <button onClick={() => navigate('/orders')} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Мои заказы</button>
                 <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Выйти</button>
               </div>
             </div>
@@ -224,8 +222,12 @@ const Dashboard = () => {
             filteredRestaurants.map(restaurant => (
               <RestaurantCard 
                 key={restaurant.id} 
-                restaurant={restaurant} 
-                onAddToCart={handleAddToCart} 
+                {...restaurant}
+                onAddToCart={() => handleAddToCart({
+                  id: restaurant.id,
+                  name: restaurant.name,
+                  price: restaurant.priceRange === '₽' ? 300 : restaurant.priceRange === '₽₽' ? 500 : 800
+                })} 
               />
             ))
           ) : (

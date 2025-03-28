@@ -39,7 +39,7 @@ const Login = () => {
         setIsLoading(false);
         
         // Переходим на главную страницу
-        navigate('../menu/Dashboard.jsx');
+        navigate('src/components/menu/Dashboard.jsx');
       } else {
         throw new Error('Неверный формат ответа от сервера');
       }
