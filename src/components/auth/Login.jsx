@@ -26,10 +26,23 @@ const Login = () => {
         password
       });
 
-      localStorage.setItem('userToken', response.data.token);
-      localStorage.setItem('userEmail', email);
-      setIsLoading(false);
-      navigate('/dashboard');
+      // Проверяем наличие токена и данных пользователя в ответе
+      if (response.data.success && response.data.token && response.data.user) {
+        // Сохраняем данные в localStorage
+        localStorage.setItem('userToken', response.data.token);
+        localStorage.setItem('userData', JSON.stringify({
+          id: response.data.user.id,
+          name: response.data.user.name,
+          email: response.data.user.email
+        }));
+        
+        setIsLoading(false);
+        
+        // Переходим на главную страницу
+        navigate('../menu/Dashboard.jsx');
+      } else {
+        throw new Error('Неверный формат ответа от сервера');
+      }
     } catch (err) {
       setIsLoading(false);
       setError(

@@ -1,8 +1,8 @@
-const API_BASE_URL = 'http://localhost:5000';
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = 'http://localhost:5000';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -79,23 +79,36 @@ const Register = () => {
     setIsLoading(true);
   
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-        phone: formData.phone || null
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/register`,
+        {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          password: formData.password,
+          phone: formData.phone || null
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
   
       localStorage.setItem('userToken', response.data.token);
+      localStorage.setItem('userData', JSON.stringify(response.data.user));
       navigate('/');
       
     } catch (error) {
-      console.error('Registration error:', error);
-      setServerError(error.response?.data?.error || 'Registration failed');
+      console.error('Registration error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
+      
+      const errorMessage = error.response?.data?.error || 
+                         error.response?.data?.message || 
+                         'Ошибка регистрации. Пожалуйста, попробуйте снова.';
+      setServerError(errorMessage);
     } finally {
       setIsLoading(false);
     }
