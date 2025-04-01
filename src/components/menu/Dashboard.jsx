@@ -6,6 +6,7 @@ import CategoryFilter from '../common/CategoryFilter';
 import SearchBar from '../common/SearchBar';
 import CartSidebar from '../common/CartSidebar';
 import OrderStatus from '../common/OrderStatus';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -33,24 +34,28 @@ const Dashboard = () => {
         }
 
         // Получаем данные пользователя
-        const userResponse = await axios.get('/api/auth/me', {
+        const userResponse = await axios.get('http://localhost:5000/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
         setUserData(userResponse.data);
 
         // Получаем список ресторанов
-        const restaurantsResponse = await axios.get('/api/restaurants');
-        setRestaurants(restaurantsResponse.data);
-        setFilteredRestaurants(restaurantsResponse.data);
+        // Получаем список ресторанов
+const restaurantsResponse = await axios.get('/api/restaurants');
+// Вытаскиваем массив из ответа:
+setRestaurants(restaurantsResponse.data.restaurants);
+setFilteredRestaurants(restaurantsResponse.data.restaurants);
 
-        // Получаем категории
-        const categoriesResponse = await axios.get('/api/categories');
-        setCategories(['Все', ...categoriesResponse.data]);
+// Получаем категории
+const categoriesResponse = await axios.get('/api/categories');
+// То же самое: вытаскиваем массив categories
+setCategories(['Все', ...categoriesResponse.data.categories]);
 
         // Проверяем активный заказ
         const orderResponse = await axios.get('/api/orders/active', {
           headers: { Authorization: `Bearer ${token}` }
-        });
+        });        
         if (orderResponse.data) {
           setActiveOrder(orderResponse.data);
         }

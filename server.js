@@ -5,20 +5,17 @@ import cors from 'cors';
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-// Загружаем переменные окружения
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-// Настройка CORS
 app.use(cors({
   origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Настройка подключения к БД
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
@@ -29,7 +26,6 @@ const pool = mysql.createPool({
   charset: 'utf8mb4'
 });
 
-// Проверка подключения к БД
 pool.getConnection()
   .then(conn => {
     console.log('Successfully connected to database');
@@ -46,7 +42,6 @@ console.log('Database config:', {
   database: process.env.DB_NAME || 'food_delivery'
 });
 
-// Middleware для проверки JWT
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -57,7 +52,7 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret-key');
-    const [users] = await pool.query('SELECT id, name, email FROM users WHERE id = ?', [decoded.userId]);
+    const [users] = await pool.query('SELECT id, name, email, phone FROM users WHERE id = ?', [decoded.userId]);
     
     if (users.length === 0) {
       return res.status(403).json({ success: false, message: 'User not found' });
@@ -71,7 +66,6 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-// Эндпоинт для регистрации
 app.post('/api/auth/register', async (req, res) => {
   console.log('Registration request:', req.body);
   
@@ -117,7 +111,108 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// Запуск сервера
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+
+    const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    
+    if (users.length === 0) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    const user = users[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || 'fallback-secret-key',
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, message: 'Login failed' });
+  }
+});
+
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      user: {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        phone: req.user.phone
+      }
+    });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch user data' });
+  }
+});
+
+// Новый маршрут для списка ресторанов
+app.get('/api/restaurants', async (req, res) => {
+  try {
+    const [restaurants] = await pool.query('SELECT * FROM restaurants');
+    res.json({ success: true, restaurants });
+  } catch (error) {
+    console.error('Error fetching restaurants:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch restaurants' });
+  }
+});
+
+// Новый маршрут для списка категорий
+app.get('/api/categories', async (req, res) => {
+  try {
+    const [categories] = await pool.query('SELECT * FROM categories');
+    res.json({ success: true, categories });
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch categories' });
+  }
+});
+
+// Новый маршрут для получения активного заказа
+app.get('/api/orders/active', authenticateToken, async (req, res) => {
+  try {
+    const [orders] = await pool.query(
+      `SELECT * FROM orders WHERE user_id = ? AND status = 'active' ORDER BY created_at DESC LIMIT 1`,
+      [req.user.id]
+    );
+
+    if (orders.length === 0) {
+      return res.json(null);
+    }
+
+    res.json(orders[0]);
+  } catch (error) {
+    console.error('Error fetching active order:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch active order' });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
