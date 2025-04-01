@@ -1,0 +1,74 @@
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 350px; /* Ширина сайдбара */
+    max-width: 90%; /* Макс ширина на мал. экранах */
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: -3px 0 15px rgba(0, 0, 0, 0.15); /* Тень слева */
+    transform: translateX(100%); /* Скрыт за экраном */
+    transition: transform 0.3s ease-in-out; /* Плавное появление */
+    z-index: 1000; /* Поверх других элементов */
+    display: flex;
+    flex-direction: column; /* Располагаем элементы вертикально */
+  }
+  
+  .cart-sidebar.open {
+    transform: translateX(0); /* Показываем сайдбар */
+  }
+  
+  .cart-sidebar-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .cart-sidebar-title {
+    margin: 0;
+    font-size: 1.3rem;
+  }
+  
+  .cart-sidebar-close-button {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    line-height: 1;
+    padding: 0;
+    color: #6c757d;
+    cursor: pointer;
+  }
+  .cart-sidebar-close-button:hover {
+    color: #343a40;
+  }
+  
+  
+  .cart-sidebar-content {
+    flex-grow: 1; /* Занимает все доступное место */
+    overflow-y: auto; /* Позволяет прокручивать содержимое */
+    padding: 0 1.5rem; /* Отступы для списка товаров */
+  }
+  /* Здесь можно переиспользовать стили .cart-item из Cart.css */
+  .cart-sidebar-content .cart-item {
+    /* Дополнительные или переопределенные стили, если нужно */
+     padding: 0.8rem 0;
+  }
+  
+  
+  .cart-sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    background-color: #f8f9fa; /* Немного выделить футер */
+  }
+  /* Здесь можно переиспользовать стили .cart-summary и .checkout-button */
+  .cart-sidebar-footer .cart-summary {
+      border-top: none; /* Убрать лишнюю границу */
+      margin-top: 0;
+      padding-top: 0;
+  }
+  .cart-sidebar-footer .checkout-button {
+      width: 100%; /* Кнопка на всю ширину в сайдбаре */
+      margin: 1rem 0 0 0; /* Убрать выравнивание справа */
+  }

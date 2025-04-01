@@ -1,0 +1,52 @@
+.review-form {
+    margin-top: 2rem;
+    padding: 1.5rem 2rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #f8f9fa; /* Немного другой фон */
+  }
+  
+  .review-form h3, .review-form h4 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #495057;
+  }
+  
+  .review-form .form-group { /* Группировка label + input/textarea */
+    margin-bottom: 1rem;
+  }
+  
+  .review-form label {
+    margin-bottom: 0.3rem; /* Уменьшенный отступ для label */
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .review-form textarea {
+    min-height: 120px; /* Больше места для текста отзыва */
+  }
+  
+  .review-form .rating-input { /* Для компонента звездного рейтинга */
+    margin-bottom: 1rem;
+    /* Сюда добавьте стили для звезд */
+    text-align: center; /* Пример выравнивания */
+  }
+  .review-form .rating-input .star { /* Пример стиля звезды */
+      font-size: 1.8rem;
+      color: #ccc;
+      cursor: pointer;
+      margin: 0 2px;
+  }
+   .review-form .rating-input .star.filled,
+   .review-form .rating-input .star:hover {
+      color: #ffc107; /* Желтый для активных/наведенных */
+  }
+  
+  
+  .review-form button[type="submit"] {
+    width: 100%; /* Кнопка на всю ширину */
+    padding: 0.75rem; /* Кнопка побольше */
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }

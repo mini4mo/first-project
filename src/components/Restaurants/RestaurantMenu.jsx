@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { ShoppingCart, Plus, Minus } from 'lucide-react';
 import { CartContext } from '../contexts/CartContext';
+import './RestaurantMenu.css';
 
 const MenuItem = ({ item, onAddToCart, onRemoveFromCart, cartQuantity }) => {
   return (

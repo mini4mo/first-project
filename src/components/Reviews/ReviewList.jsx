@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, ThumbsUp, ThumbsDown, Filter } from 'lucide-react';
+import './ReviewList.css';
 
 const ReviewList = ({ restaurantId }) => {
   const [reviews, setReviews] = useState([

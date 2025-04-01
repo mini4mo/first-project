@@ -1,0 +1,67 @@
+.restaurant-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex; /* Используем flex для лучшего контроля */
+    flex-direction: column; /* Располагаем элементы вертикально */
+    height: 100%; /* Занимаем всю высоту grid-ячейки */
+  }
+  
+  .restaurant-card:hover {
+    transform: translateY(-5px); /* Небольшой подъем при наведении */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+  
+  .restaurant-card img { /* Если есть изображение */
+    width: 100%;
+    height: 200px; /* Фиксированная высота для единообразия */
+    object-fit: cover; /* Масштабирование с обрезкой */
+    display: block; /* Убрать лишний отступ под картинкой */
+  }
+  
+  .restaurant-card-content {
+    padding: 1rem 1.25rem;
+    flex-grow: 1; /* Позволяет этому блоку занять доступное пространство */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .restaurant-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .restaurant-card-description {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.75rem;
+    flex-grow: 1; /* Занимает пространство, отодвигая кнопку вниз */
+  }
+  
+  .restaurant-card-details {
+      font-size: 0.85rem;
+      color: #777;
+      margin-bottom: 1rem;
+  }
+  
+  .restaurant-card-actions {
+    margin-top: auto; /* Прижимает кнопку к низу карточки */
+    text-align: right; /* Выравнивание кнопки справа */
+  }
+  
+  .restaurant-card-actions .btn-details { /* Специфичная кнопка */
+    background-color: #28a745; /* Зеленый цвет */
+    border-color: #28a745;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+  .restaurant-card-actions .btn-details:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }

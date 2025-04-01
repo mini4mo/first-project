@@ -1,0 +1,43 @@
+.order-status {
+    display: inline-block; /* Чтобы занимал место по содержимому */
+    padding: 0.3rem 0.8rem; /* Небольшие отступы */
+    font-size: 0.85rem;
+    font-weight: 600; /* Полужирный */
+    line-height: 1; /* Убрать лишнюю высоту */
+    text-align: center;
+    white-space: nowrap; /* Не переносить текст */
+    vertical-align: baseline;
+    border-radius: 10rem; /* Сильно скругленные края (пилюля) */
+    color: #fff; /* Белый текст по умолчанию */
+  }
+  
+  /* Цвета для разных статусов */
+  .order-status-pending,
+  .order-status-new {
+    background-color: #ffc107; /* Желтый */
+    color: #212529; /* Темный текст для желтого фона */
+  }
+  
+  .order-status-processing,
+  .order-status-confirmed {
+    background-color: #17a2b8; /* Бирюзовый */
+  }
+  
+  .order-status-shipped,
+  .order-status-out-for-delivery {
+    background-color: #007bff; /* Синий */
+  }
+  
+  .order-status-delivered,
+  .order-status-completed {
+    background-color: #28a745; /* Зеленый */
+  }
+  
+  .order-status-cancelled,
+  .order-status-failed {
+    background-color: #dc3545; /* Красный */
+  }
+  
+  .order-status-refunded {
+      background-color: #6c757d; /* Серый */
+  }

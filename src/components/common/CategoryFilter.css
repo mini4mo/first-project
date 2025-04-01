@@ -1,0 +1,42 @@
+.category-filter {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem; /* Отступ для границы */
+    border-bottom: 1px solid #eee; /* Разделитель */
+    display: flex; /* Для расположения в ряд */
+    flex-wrap: wrap; /* Перенос на новую строку при нехватке места */
+    gap: 0.75rem; /* Промежутки между кнопками */
+  }
+  
+  .category-filter-title { /* Если есть заголовок фильтров */
+    width: 100%; /* На всю ширину */
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .category-filter button {
+    background-color: #e9ecef; /* Светло-серый фон */
+    color: #495057; /* Темно-серый текст */
+    border: 1px solid #ced4da;
+    padding: 0.4rem 0.9rem; /* Немного меньше стандартной кнопки */
+    font-size: 0.9rem;
+    border-radius: 20px; /* Сильно скругленные края (форма пилюли) */
+  }
+  
+  .category-filter button:hover {
+    background-color: #dee2e6;
+    border-color: #adb5bd;
+    color: #343a40;
+  }
+  
+  .category-filter button.active { /* Стиль для активного фильтра */
+    background-color: #007bff; /* Основной синий цвет */
+    border-color: #007bff;
+    color: #fff; /* Белый текст */
+    font-weight: 500;
+  }
+  
+  .category-filter button.active:hover {
+     background-color: #0056b3;
+     border-color: #0056b3;
+  }

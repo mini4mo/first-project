@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star, Clock, MapPin } from 'lucide-react';
-
+import './RestaurantCard.css';
 const RestaurantCard = ({ 
   id,
   name, 

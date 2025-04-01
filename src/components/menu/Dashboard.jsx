@@ -41,16 +41,13 @@ const Dashboard = () => {
         setUserData(userResponse.data);
 
         // Получаем список ресторанов
-        // Получаем список ресторанов
-const restaurantsResponse = await axios.get('/api/restaurants');
-// Вытаскиваем массив из ответа:
-setRestaurants(restaurantsResponse.data.restaurants);
-setFilteredRestaurants(restaurantsResponse.data.restaurants);
+        const restaurantsResponse = await axios.get('/api/restaurants');
+        setRestaurants(restaurantsResponse.data.restaurants);
+        setFilteredRestaurants(restaurantsResponse.data.restaurants);
 
-// Получаем категории
-const categoriesResponse = await axios.get('/api/categories');
-// То же самое: вытаскиваем массив categories
-setCategories(['Все', ...categoriesResponse.data.categories]);
+        // Получаем категории
+        const categoriesResponse = await axios.get('/api/categories');
+        setCategories(['Все', ...categoriesResponse.data.categories]);
 
         // Проверяем активный заказ
         const orderResponse = await axios.get('/api/orders/active', {
@@ -160,7 +157,7 @@ setCategories(['Все', ...categoriesResponse.data.categories]);
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="dashboard min-h-screen bg-gray-50">
       {/* Шапка */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -199,7 +196,7 @@ setCategories(['Все', ...categoriesResponse.data.categories]);
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <main className="dashboard-grid max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {activeOrder && (
           <OrderStatus 
             order={activeOrder} 
@@ -207,14 +204,14 @@ setCategories(['Все', ...categoriesResponse.data.categories]);
           />
         )}
 
-        <div className="mb-6">
+        <div className="dashboard-section mb-6">
           <SearchBar 
             value={searchQuery} 
             onChange={(e) => setSearchQuery(e.target.value)} 
           />
         </div>
 
-        <div className="mb-6">
+        <div className="dashboard-section mb-6">
           <CategoryFilter 
             categories={categories} 
             selectedCategory={selectedCategory} 
@@ -222,7 +219,7 @@ setCategories(['Все', ...categoriesResponse.data.categories]);
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="dashboard-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRestaurants.length > 0 ? (
             filteredRestaurants.map(restaurant => (
               <RestaurantCard 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Send } from 'lucide-react';
+import './ReviewForm.css';
 
 const ReviewForm = ({ restaurantId, onSubmitReview }) => {
   const [rating, setRating] = useState(0);

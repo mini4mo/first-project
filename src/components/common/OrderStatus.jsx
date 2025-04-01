@@ -1,4 +1,5 @@
 import React from 'react';
+import './OrderStatus.css';
 
 const OrderStatus = ({ order, onClose }) => {
   if (!order) return null;

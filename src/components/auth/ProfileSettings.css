@@ -1,0 +1,55 @@
+/* ProfileSettings.css */
+
+.profile-settings-container {
+    /* Можно использовать .auth-container или создать похожий */
+    max-width: 600px; /* Чуть шире для настроек */
+    margin: 2rem auto;
+    padding: 2rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  }
+  
+  .profile-settings-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #343a40;
+  }
+  
+  /* Используйте .form-group из Auth.css или определите здесь */
+  .profile-settings-container .form-group {
+     margin-bottom: 1.25rem;
+  }
+  
+  .profile-settings-container button[type="submit"] {
+    /* Можно использовать стиль из Auth.css или свой */
+    display: block; /* Или inline-block */
+    width: auto; /* Не обязательно на всю ширину */
+    min-width: 150px;
+    margin: 1.5rem auto 0 auto; /* Центрировать кнопку */
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .profile-picture-section { /* Секция для аватара */
+      text-align: center;
+      margin-bottom: 1.5rem;
+  }
+  .profile-picture-section img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%; /* Круглый аватар */
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #eee;
+  }
+  .profile-picture-section button { /* Кнопка смены аватара */
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+      background-color: #6c757d;
+      border-color: #6c757d;
+  }
+  .profile-picture-section button:hover {
+      background-color: #5a6268;
+      border-color: #545b62;
+  }

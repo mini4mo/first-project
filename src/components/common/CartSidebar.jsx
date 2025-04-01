@@ -1,5 +1,6 @@
 // src/components/common/CartSidebar.jsx
 import React from 'react';
+import './CartSidebar.css';
 
 const CartSidebar = ({ 
   isOpen, 

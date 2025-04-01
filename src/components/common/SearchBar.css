@@ -1,0 +1,36 @@
+.search-bar {
+    display: flex;
+    margin-bottom: 1.5rem; /* Отступ снизу */
+    position: relative; /* Для возможного позиционирования иконки */
+  }
+  
+  .search-bar input[type="search"] {
+    flex-grow: 1; /* Поле ввода занимает максимум места */
+    border-right: none; /* Убираем границу справа, если кнопка прилегает */
+    border-top-right-radius: 0; /* Скругление убираем */
+    border-bottom-right-radius: 0;
+    padding-right: 2.5rem; /* Место для иконки или кнопки */
+    margin-bottom: 0; /* Убираем стандартный отступ */
+  }
+  
+  .search-bar button { /* Кнопка поиска */
+    border-top-left-radius: 0; /* Убираем скругление слева */
+    border-bottom-left-radius: 0;
+    flex-shrink: 0; /* Не сжиматься */
+    /* Можно добавить иконку */
+  }
+  .search-bar button .search-icon { /* Класс для иконки внутри кнопки */
+      /* Стили для SVG или font-icon */
+      width: 1em;
+      height: 1em;
+  }
+  
+  /* Альтернативный вариант с иконкой внутри поля */
+  .search-bar .search-icon-inside {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+      pointer-events: none; /* Чтобы не мешала клику по полю */
+  }

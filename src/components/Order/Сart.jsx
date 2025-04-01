@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Trash2, Plus, Minus, ShoppingCart } from 'lucide-react';
 import { CartContext } from '../contexts/CartContext';
 import { Link } from 'react-router-dom';
+import './Cart.css';
 
 const Cart = () => {
   const { 

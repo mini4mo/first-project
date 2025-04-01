@@ -1,0 +1,13 @@
+.restaurant-list {
+    display: grid;
+    /* Адаптивные колонки: минимум 280px, максимум 1fr (равная ширина) */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem; /* Промежуток между карточками */
+    padding-top: 1rem;
+  }
+  
+  .restaurant-list-title { /* Если есть заголовок списка */
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+  }
