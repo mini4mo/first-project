@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import RestaurantCard from '../Restaurants/RestaurantCard';
-import CategoryFilter from '../common/CategoryFilter';
-import SearchBar from '../common/SearchBar';
-import CartSidebar from '../common/CartSidebar';
-import OrderStatus from '../common/OrderStatus';
+import RestaurantCard from '../Restaurants/RestaurantCard.jsx';
+import CategoryFilter from '../common/CategoryFilter.jsx';
+import SearchBar from '../common/SearchBar.jsx';
+import CartSidebar from '../common/CartSidebar.jsx';
+import OrderStatus from '../common/OrderStatus.jsx';
 import './Dashboard.css';
+
+// Устанавливаем базовый URL для axios
+axios.defaults.baseURL = 'http://localhost:5000';
 
 const Dashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -33,23 +36,19 @@ const Dashboard = () => {
           return;
         }
 
-        // Получаем данные пользователя
-        const userResponse = await axios.get('http://localhost:5000/api/auth/me', {
+        const userResponse = await axios.get('/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         
         setUserData(userResponse.data);
 
-        // Получаем список ресторанов
         const restaurantsResponse = await axios.get('/api/restaurants');
         setRestaurants(restaurantsResponse.data.restaurants);
         setFilteredRestaurants(restaurantsResponse.data.restaurants);
 
-        // Получаем категории
         const categoriesResponse = await axios.get('/api/categories');
         setCategories(['Все', ...categoriesResponse.data.categories]);
 
-        // Проверяем активный заказ
         const orderResponse = await axios.get('/api/orders/active', {
           headers: { Authorization: `Bearer ${token}` }
         });        
@@ -91,162 +90,58 @@ const Dashboard = () => {
     setFilteredRestaurants(result);
   }, [selectedCategory, searchQuery, restaurants]);
 
-  const handleAddToCart = (item) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(i => i.id === item.id);
-      if (existingItem) {
-        return prevItems.map(i => 
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-      return [...prevItems, { ...item, quantity: 1 }];
-    });
+  const handleRestaurantClick = (restaurantId) => {
+    navigate(`/restaurants/${restaurantId}`);
   };
-
-  const handleRemoveFromCart = (itemId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-  };
-
-  const handleUpdateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCartItems(prevItems => 
-      prevItems.map(item => 
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  const handleCheckout = async () => {
-    try {
-      const token = localStorage.getItem('userToken');
-      const response = await axios.post('/api/orders', {
-        items: cartItems,
-        deliveryAddress: userData.address || ''
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      setActiveOrder(response.data);
-      setCartItems([]);
-      setIsCartOpen(false);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка при оформлении заказа');
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userData');
-    navigate('/login');
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 bg-red-100 text-red-700 rounded-md max-w-md mx-auto mt-8">
-        {error}
-      </div>
-    );
-  }
 
   return (
-    <div className="dashboard min-h-screen bg-gray-50">
-      {/* Шапка */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-indigo-600">Быстрая Доставка</h1>
-          
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="relative p-2 text-gray-600 hover:text-indigo-600"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              {cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItems.reduce((total, item) => total + item.quantity, 0)}
-                </span>
-              )}
-            </button>
-            
-            <div className="relative group">
-              <button className="flex items-center space-x-2 focus:outline-none">
-                <span className="text-sm font-medium">{userData?.name || userData?.email}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-              
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                <button onClick={() => navigate('/profile')} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Профиль</button>
-                <button onClick={() => navigate('/orders')} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Мои заказы</button>
-                <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Выйти</button>
-              </div>
-            </div>
-          </div>
+    <div className="dashboard min-h-screen bg-gray-50 flex flex-col items-center">
+      <header className="bg-white shadow-md w-full py-4 px-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-indigo-600">Быстрая Доставка</h1>
+        <div className="relative flex items-center">
+          <SearchBar value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <span className="absolute right-2 top-2 text-gray-500 text-lg">🔍</span>
         </div>
+        <button 
+          onClick={() => setIsCartOpen(true)}
+          className="relative p-2 text-gray-600 hover:text-indigo-600"
+        >
+          🛒 {cartItems.length > 0 ? cartItems.length : ''}
+        </button>
       </header>
 
-      <main className="dashboard-grid max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        {activeOrder && (
-          <OrderStatus 
-            order={activeOrder} 
-            onClose={() => setActiveOrder(null)} 
-          />
-        )}
-
-        <div className="dashboard-section mb-6">
-          <SearchBar 
-            value={searchQuery} 
-            onChange={(e) => setSearchQuery(e.target.value)} 
-          />
+      {activeOrder && (
+        <div className="w-full max-w-7xl mt-4">
+          <OrderStatus order={activeOrder} />
         </div>
+      )}
 
-        <div className="dashboard-section mb-6">
+      <div className="flex w-full max-w-7xl mt-6 gap-4">
+        <aside className="w-1/4 p-4 bg-white shadow rounded-lg">
           <CategoryFilter 
             categories={categories} 
             selectedCategory={selectedCategory} 
             onSelectCategory={setSelectedCategory} 
           />
-        </div>
+        </aside>
 
-        <div className="dashboard-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRestaurants.length > 0 ? (
-            filteredRestaurants.map(restaurant => (
-              <RestaurantCard 
-                key={restaurant.id} 
-                {...restaurant}
-                onAddToCart={() => handleAddToCart({
-                  id: restaurant.id,
-                  name: restaurant.name,
-                  price: restaurant.priceRange === '₽' ? 300 : restaurant.priceRange === '₽₽' ? 500 : 800
-                })} 
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-10">
-              <p className="text-gray-500">Рестораны не найдены. Попробуйте изменить параметры поиска.</p>
-            </div>
-          )}
-        </div>
-      </main>
+        <main className="w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRestaurants.map(restaurant => (
+            <RestaurantCard 
+              key={restaurant.id} 
+              {...restaurant}
+              onClick={() => handleRestaurantClick(restaurant.id)}
+              buttonText="Перейти в меню"
+            />
+          ))}
+        </main>
+      </div>
 
       <CartSidebar 
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)} 
         items={cartItems} 
-        onRemoveItem={handleRemoveFromCart} 
-        onUpdateQuantity={handleUpdateQuantity} 
-        onCheckout={handleCheckout} 
+        onCheckout={() => navigate('/checkout')}
       />
     </div>
   );

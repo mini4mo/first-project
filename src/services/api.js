@@ -1,17 +1,17 @@
-// src/services/api.js
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-// Helper function to get auth header
 const getAuthHeader = () => {
   const token = localStorage.getItem('userToken');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
+  return token ? { 
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  } : {};
 };
 
 export const fetchRestaurants = async () => {
   const response = await fetch(`${API_BASE_URL}/restaurants`, {
-    headers: {
-      ...getAuthHeader()
-    }
+    headers: getAuthHeader(),
+    credentials: 'include'
   });
   
   if (!response.ok) {
@@ -23,9 +23,8 @@ export const fetchRestaurants = async () => {
 
 export const fetchMenuItems = async (restaurantId) => {
   const response = await fetch(`${API_BASE_URL}/restaurants/${restaurantId}/menu`, {
-    headers: {
-      ...getAuthHeader()
-    }
+    headers: getAuthHeader(),
+    credentials: 'include'
   });
   
   if (!response.ok) {
@@ -43,6 +42,7 @@ export const createOrder = async (orderData) => {
       ...getAuthHeader()
     },
     body: JSON.stringify(orderData),
+    credentials: 'include'
   });
   
   if (!response.ok) {
@@ -58,7 +58,8 @@ export const login = async (credentials) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(credentials)
+    body: JSON.stringify(credentials),
+    credentials: 'include'
   });
   
   if (!response.ok) {
@@ -75,7 +76,8 @@ export const register = async (userData) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(userData)
+    body: JSON.stringify(userData),
+    credentials: 'include'
   });
   
   if (!response.ok) {
@@ -88,9 +90,8 @@ export const register = async (userData) => {
 
 export const fetchActiveOrder = async () => {
   const response = await fetch(`${API_BASE_URL}/orders/active`, {
-    headers: {
-      ...getAuthHeader()
-    }
+    headers: getAuthHeader(),
+    credentials: 'include'
   });
   
   if (!response.ok) {
@@ -102,9 +103,8 @@ export const fetchActiveOrder = async () => {
 
 export const getUserProfile = async () => {
   const response = await fetch(`${API_BASE_URL}/auth/me`, {
-    headers: {
-      ...getAuthHeader()
-    }
+    headers: getAuthHeader(),
+    credentials: 'include'
   });
   
   if (!response.ok) {

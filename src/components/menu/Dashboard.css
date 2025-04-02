@@ -1,321 +1,657 @@
-/* Dashboard.css - дополнительные стили для Dashboard.jsx */
+/* Dashboard.css - Премиальный стиль для приложения доставки еды */
 
-/* Общие стили и переменные */
+/* Базовые настройки и переменные */
 :root {
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --secondary-color: #f3f4f6;
-    --accent-color: #818cf8;
-    --text-primary: #111827;
-    --text-secondary: #6b7280;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --error-color: #ef4444;
-    --border-radius: 0.5rem;
-    --transition-speed: 0.2s;
-    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary: #f97316;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --bg-light: #f9fafb;
+  --bg-dark: #f3f4f6;
+  --border-radius: 0.5rem;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --transition: all 0.3s ease;
+}
+
+/* Общие стили */
+.dashboard {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: var(--text-dark);
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  min-height: 100vh;
+}
+
+/* Заголовок */
+.dashboard header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  transition: var(--transition);
+}
+
+.dashboard header:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard h1 {
+  background: linear-gradient(to right, var(--primary), #6366f1);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+/* Поиск - исправленный стиль для соответствия JSX структуре */
+.dashboard header .relative {
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* SVG иконка лупы вместо эмодзи */
+.dashboard header .absolute {
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+/* Заменить эмодзи лупы на SVG */
+.dashboard header .absolute:after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  top: 0;
+  right: 0;
+}
+
+.dashboard header .absolute:before {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 8px;
+  background: currentColor;
+  border-radius: 1px;
+  transform: rotate(-45deg);
+  top: 12px;
+  right: -4px;
+}
+
+/* Заменить эмодзи корзины на SVG */
+.dashboard header button[class*="relative p-2"] {
+  position: relative;
+}
+
+.dashboard header button[class*="relative p-2"]:before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z'%3E%3C/path%3E%3Cline x1='3' y1='6' x2='21' y2='6'%3E%3C/line%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+}
+
+.dashboard input[type="search"],
+.dashboard input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--border-radius);
+  background-color: white;
+  transition: var(--transition);
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.dashboard input[type="search"]:focus,
+.dashboard input[type="text"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* Категории */
+.dashboard aside {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  height: fit-content;
+  transition: var(--transition);
+}
+
+.dashboard aside:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard .category-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+  color: var(--text-dark);
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.dashboard .category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dashboard .category-item {
+  padding: 0.625rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.dashboard .category-item::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: transparent;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  transition: var(--transition);
+}
+
+.dashboard .category-item:hover {
+  background-color: var(--bg-light);
+  color: var(--primary);
+}
+
+.dashboard .category-item.active {
+  background-color: rgba(79, 70, 229, 0.1);
+  color: var(--primary);
+}
+
+.dashboard .category-item.active::before {
+  background-color: var(--primary);
+}
+
+/* Карточки ресторанов */
+.dashboard main {
+  padding: 0.5rem;
+}
+
+.restaurant-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  height: 100%;
+  position: relative;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.restaurant-image {
+  height: 180px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.restaurant-card:hover .restaurant-image {
+  transform: scale(1.05);
+  transition: transform 0.5s ease;
+}
+
+.restaurant-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.restaurant-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.restaurant-cuisine {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Заменить эмодзи тарелки на SVG */
+.restaurant-cuisine::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 0.375rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpath d='M8 14s1.5 2 4 2 4-2 4-2'%3E%3C/path%3E%3Cline x1='9' y1='9' x2='9.01' y2='9'%3E%3C/line%3E%3Cline x1='15' y1='9' x2='15.01' y2='9'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.restaurant-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.rating-stars {
+  color: var(--secondary);
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+}
+
+.rating-count {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.restaurant-delivery {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+/* Заменить эмодзи часов на SVG */
+.restaurant-time {
+  position: relative;
+  padding-left: 20px;
+}
+
+.restaurant-time::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Заменить эмодзи денег на SVG */
+.restaurant-fee {
+  position: relative;
+  padding-left: 20px;
+}
+
+.restaurant-fee::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='1' x2='12' y2='23'%3E%3C/line%3E%3Cpath d='M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.restaurant-button {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.restaurant-button:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+/* Статус заказа */
+.order-status {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--primary);
+}
+
+.order-status-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-number {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.order-progress {
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  height: 0.375rem;
+  background-color: var(--bg-dark);
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--primary), #6366f1);
+  border-radius: 1rem;
+  transition: width 0.5s ease-in-out;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+}
+
+.progress-step {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  position: relative;
+  text-align: center;
+  flex: 1;
+}
+
+.progress-step.active {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Корзина */
+.cart-sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  max-width: 400px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-sidebar.open {
+  transform: translateX(0);
+}
+
+.cart-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.close-cart {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: var(--transition);
+}
+
+.close-cart:hover {
+  color: var(--text-dark);
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cart-item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 0.375rem;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-name {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.cart-item-price {
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.qty-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.qty-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.qty-value {
+  margin: 0 0.75rem;
+  font-weight: 500;
+}
+
+.cart-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 1.5rem;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkout-btn:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+.checkout-btn:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .dashboard .flex {
+    flex-direction: column;
   }
   
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: var(--text-primary);
-    background-color: #f9fafb;
+  .dashboard aside {
+    width: 100%;
+    margin-bottom: 1.5rem;
   }
   
-  /* Анимации */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
-  }
-  
-  /* Улучшенный заголовок */
-  header {
-    background: linear-gradient(to right, #ffffff, #f9fafb);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  
-  header h1 {
-    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    letter-spacing: -0.025em;
-  }
-  
-  /* Основное содержимое */
-  main {
-    animation: fadeIn 0.5s ease;
-  }
-  
-  /* Карточки ресторанов */
-  .restaurant-card {
-    background: white;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-  }
-  
-  .restaurant-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .restaurant-card img {
-    object-fit: cover;
-    height: 180px;
+  .dashboard main {
     width: 100%;
   }
-  
-  .restaurant-card h3 {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard header {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+    align-items: stretch;
   }
   
-  /* Категории и фильтры */
-  .category-button {
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    transition: all var(--transition-speed);
+  .dashboard main {
+    grid-template-columns: repeat(1, 1fr);
   }
   
-  .category-button.active {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 500;
-  }
-  
-  .category-button:not(.active):hover {
-    background-color: var(--secondary-color);
-  }
-  
-  /* Поиск */
-  .search-input {
-    border-radius: var(--border-radius);
-    border: 1px solid #e5e7eb;
-    padding-left: 2.5rem;
-    font-size: 0.875rem;
-    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
-    background-position: 0.75rem center;
-    background-repeat: no-repeat;
-    background-size: 1rem;
-  }
-  
-  .search-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-    outline: none;
-  }
-  
-  /* Корзина */
   .cart-sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: 400px;
-    background-color: white;
-    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 50;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
+    max-width: 100%;
   }
-  
-  .cart-sidebar.open {
-    transform: translateX(0);
-  }
-  
-  .cart-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  
-  .cart-item-name {
-    flex-grow: 1;
-    font-weight: 500;
-  }
-  
-  .cart-quantity-control {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-    overflow: hidden;
-  }
-  
-  .quantity-button {
-    background-color: #f3f4f6;
-    border: none;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color var(--transition-speed);
-  }
-  
-  .quantity-button:hover {
-    background-color: #e5e7eb;
-  }
-  
-  .quantity-display {
-    width: 2rem;
-    text-align: center;
-    font-weight: 500;
-  }
-  
-  /* Кнопки */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    font-weight: 500;
-    transition: all var(--transition-speed);
-    cursor: pointer;
-  }
-  
-  .btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--primary-hover);
-  }
-  
-  .btn-primary:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
-  }
-  
-  .btn-secondary {
-    background-color: white;
-    color: var(--text-primary);
-    border: 1px solid #e5e7eb;
-  }
-  
-  .btn-secondary:hover {
-    background-color: var(--secondary-color);
-  }
-  
-  /* Статус заказа */
-  .order-status {
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    margin-bottom: 2rem;
-    padding: 1rem;
-    border-left: 4px solid var(--primary-color);
-    animation: slideIn 0.3s ease;
-  }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-  }
-  
-  .status-badge.pending {
-    background-color: #fef3c7;
-    color: #92400e;
-  }
-  
-  .status-badge.processing {
-    background-color: #e0f2fe;
-    color: #0369a1;
-  }
-  
-  .status-badge.delivering {
-    background-color: #dbeafe;
-    color: #1e40af;
-  }
-  
-  .status-badge.completed {
-    background-color: #d1fae5;
-    color: #065f46;
-  }
-  
-  /* Загрузка */
-  .spinner {
-    border-top-color: var(--primary-color);
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
-  /* Адаптив для мобильных устройств */
-  @media (max-width: 640px) {
-    .cart-sidebar {
-      max-width: 100%;
-    }
-    
-    .restaurant-card img {
-      height: 150px;
-    }
-  }
-  
-  /* Для пользовательского дропдауна */
-  .dropdown-menu {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity var(--transition-speed), transform var(--transition-speed);
-    pointer-events: none;
-  }
-  
-  .dropdown:hover .dropdown-menu {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-  
-  /* Для кнопки корзины */
-  .cart-button {
-    position: relative;
-  }
-  
-  .cart-button:hover {
-    color: var(--primary-color);
-  }
-  
-  .cart-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 9999px;
-    min-width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    animation: pulse 2s infinite;
-  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.restaurant-card {
+  animation: fadeIn 0.3s ease-out, slideUp 0.3s ease-out;
+}
+
+/* Скелетон-загрузка */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--border-radius);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-card {
+  height: 300px;
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-text-sm {
+  height: 0.75rem;
+  width: 70%;
+}
+
+/* Оформление пустых состояний */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.empty-message {
+  max-width: 300px;
+  margin-bottom: 1.5rem;
+}
+
+.empty-action {
+  padding: 0.625rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.empty-action:hover {
+  background-color: var(--primary-hover);
+}

@@ -7,61 +7,47 @@ import {
   CreditCard, 
   Navigation 
 } from 'lucide-react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const OrderStatus = {
   CREATED: 'Создан',
   CONFIRMED: 'Подтвержден',
   COOKING: 'Готовится',
   DELIVERING: 'Доставляется',
-  COMPLETED: 'Доставлен'
+  COMPLETED: 'Доставлен',
+  CANCELLED: 'Отменен'
 };
 
-const OrderTracking = ({ orderId }) => {
-  const [orderDetails, setOrderDetails] = useState({
-    id: orderId,
-    status: OrderStatus.CREATED,
-    restaurant: 'Вкусная Кухня',
-    estimatedDeliveryTime: '45-60 мин',
-    items: [
-      { id: 1, name: 'Цезарь с курицей', quantity: 1, price: 350 },
-      { id: 2, name: 'Пицца Маргарита', quantity: 2, price: 450 }
-    ],
-    totalPrice: 1250,
-    deliveryAddress: 'ул. Центральная, 10, кв. 25',
-    courierInfo: {
-      name: 'Иван',
-      phone: '+7 (999) 123-45-67',
-      transportType: 'Скутер'
-    }
-  });
+const OrderTracking = () => {
+  const { orderId } = useParams();
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [trackingSteps, setTrackingSteps] = useState([
-    { 
-      status: OrderStatus.CREATED, 
-      completed: true, 
-      time: '20:15' 
-    },
-    { 
-      status: OrderStatus.CONFIRMED, 
-      completed: true, 
-      time: '20:17' 
-    },
-    { 
-      status: OrderStatus.COOKING, 
-      completed: true, 
-      time: '20:25' 
-    },
-    { 
-      status: OrderStatus.DELIVERING, 
-      completed: false, 
-      time: null 
-    },
-    { 
-      status: OrderStatus.COMPLETED, 
-      completed: false, 
-      time: null 
-    }
-  ]);
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        const token = localStorage.getItem('userToken');
+        if (!token) {
+          setError('Требуется авторизация');
+          return;
+        }
+
+        const response = await axios.get(`/api/orders/${orderId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        setOrderDetails(response.data);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Ошибка загрузки данных заказа');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderId]);
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -70,9 +56,40 @@ const OrderTracking = ({ orderId }) => {
       case OrderStatus.COOKING: return 'text-orange-500';
       case OrderStatus.DELIVERING: return 'text-green-500';
       case OrderStatus.COMPLETED: return 'text-green-700';
+      case OrderStatus.CANCELLED: return 'text-red-500';
       default: return 'text-gray-500';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 mt-10">
+        {error}
+      </div>
+    );
+  }
+
+  if (!orderDetails) {
+    return <div className="text-center mt-10">Заказ не найден</div>;
+  }
+
+  // Создаем шаги для отображения прогресса
+  const statusSteps = Object.values(OrderStatus);
+  const currentStatusIndex = statusSteps.indexOf(orderDetails.status);
+
+  const trackingSteps = statusSteps.map((status, index) => ({
+    status,
+    completed: index <= currentStatusIndex,
+    time: index <= currentStatusIndex ? new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : null
+  }));
 
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
@@ -121,21 +138,23 @@ const OrderTracking = ({ orderId }) => {
             ))}
           </div>
 
-          {/* Детали курьера */}
-          <div className="bg-blue-50 p-4 rounded-lg flex items-center space-x-4 mb-6">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Truck className="text-blue-500" />
-            </div>
-            <div>
-              <h3 className="font-semibold">Курьер: {orderDetails.courierInfo.name}</h3>
-              <div className="flex items-center space-x-2 text-gray-600">
-                <Phone className="w-4 h-4" />
-                <span>{orderDetails.courierInfo.phone}</span>
-                <Navigation className="w-4 h-4 text-blue-500" />
-                <span>{orderDetails.courierInfo.transportType}</span>
+          {/* Детали курьера (если статус DELIVERING) */}
+          {orderDetails.status === OrderStatus.DELIVERING && orderDetails.courier && (
+            <div className="bg-blue-50 p-4 rounded-lg flex items-center space-x-4 mb-6">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <Truck className="text-blue-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Курьер: {orderDetails.courier.name}</h3>
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <Phone className="w-4 h-4" />
+                  <span>{orderDetails.courier.phone}</span>
+                  <Navigation className="w-4 h-4 text-blue-500" />
+                  <span>{orderDetails.courier.transportType || 'Автомобиль'}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Список товаров */}
           <div className="border-t pt-4">
@@ -158,7 +177,7 @@ const OrderTracking = ({ orderId }) => {
             ))}
             <div className="flex justify-between font-bold mt-4">
               <span>Итого</span>
-              <span>{orderDetails.totalPrice} ₽</span>
+              <span>{orderDetails.total} ₽</span>
             </div>
           </div>
 
@@ -168,15 +187,24 @@ const OrderTracking = ({ orderId }) => {
               <MapPin className="text-blue-500" />
               <div>
                 <h4 className="font-semibold">Адрес доставки</h4>
-                <p className="text-gray-600">{orderDetails.deliveryAddress}</p>
+                <p className="text-gray-600">{orderDetails.address}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3 mt-3">
               <Clock className="text-blue-500" />
               <div>
-                <h4 className="font-semibold">Estimated Delivery</h4>
+                <h4 className="font-semibold">Время доставки</h4>
                 <p className="text-gray-600">
-                  {orderDetails.estimatedDeliveryTime}
+                  {orderDetails.estimatedDeliveryTime || '30-60 мин'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3 mt-3">
+              <CreditCard className="text-blue-500" />
+              <div>
+                <h4 className="font-semibold">Способ оплаты</h4>
+                <p className="text-gray-600">
+                  {orderDetails.paymentMethod === 'card' ? 'Картой онлайн' : 'Наличными'}
                 </p>
               </div>
             </div>

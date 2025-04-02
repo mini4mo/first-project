@@ -1,9 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { MapPin, CreditCard, Truck, User, Phone } from 'lucide-react';
-import { CartContext } from '../contexts/CartContext';
+import { useCart } from '../contexts/CartContext.jsx';
+import { CartProvider } from '../contexts/CartContext.jsx';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Checkout = () => {
-  const { cart, totalPrice } = useContext(CartContext);
+  const { cart, totalPrice, clearCart } = useContext(CartContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -22,17 +26,37 @@ const Checkout = () => {
     }));
   };
 
-  const handleSubmitOrder = (e) => {
+  const handleSubmitOrder = async (e) => {
     e.preventDefault();
-    // Логика отправки заказа
-    const orderData = {
-      ...formData,
-      items: cart,
-      totalPrice
-    };
-    
-    console.log('Заказ отправлен:', orderData);
-    // Здесь будет вызов API для отправки заказа
+    try {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const orderData = {
+        ...formData,
+        items: cart,
+        total: totalPrice,
+        status: 'created'
+      };
+
+      const response = await axios.post('/api/orders', orderData, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.data.success) {
+        clearCart();
+        navigate(`/order/${response.data.order.id}`);
+      }
+    } catch (err) {
+      console.error('Ошибка при оформлении заказа:', err);
+      alert('Произошла ошибка при оформлении заказа. Пожалуйста, попробуйте снова.');
+    }
   };
 
   return (

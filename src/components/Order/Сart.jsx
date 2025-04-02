@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Trash2, Plus, Minus, ShoppingCart } from 'lucide-react';
-import { CartContext } from '../contexts/CartContext';
+import { useCart } from '../contexts/CartContext.jsx';
 import { Link } from 'react-router-dom';
 import './Cart.css';
 
@@ -11,7 +11,7 @@ const Cart = () => {
     removeFromCart, 
     clearCart, 
     totalPrice 
-  } = useContext(CartContext);
+  } = useCart();
 
   // Группировка похожих товаров
   const groupedCart = cart.reduce((acc, item) => {
