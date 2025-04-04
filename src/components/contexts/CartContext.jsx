@@ -1,75 +1,67 @@
-import { Component } from 'lucide-react';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 const CartContext = createContext();
 
-export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+const initialState = {
+  items: [],
+  total: 0,
+};
 
-  // Загрузка корзины из localStorage при инициализации
-  useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-  }, []);
-
-  // Сохранение корзины в localStorage при изменении
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (item) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(cartItem => cartItem.id === item.id);
-      
+const cartReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_ITEM':
+      const existingItem = state.items.find(item => item.id === action.payload.id);
       if (existingItem) {
-        return prevCart.map(cartItem =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
+        return {
+          ...state,
+          items: state.items.map(item =>
+            item.id === action.payload.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          ),
+        };
       }
-      
-      return [...prevCart, { ...item, quantity: 1 }];
-    });
-  };
+      return {
+        ...state,
+        items: [...state.items, { ...action.payload, quantity: 1 }],
+      };
 
-  const removeFromCart = (item) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(cartItem => cartItem.id === item.id);
-      
-      if (existingItem && existingItem.quantity > 1) {
-        return prevCart.map(cartItem =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem
-        );
-      }
-      
-      return prevCart.filter(cartItem => cartItem.id !== item.id);
-    });
-  };
+    case 'REMOVE_ITEM':
+      return {
+        ...state,
+        items: state.items.filter(item => item.id !== action.payload),
+      };
 
-  const clearCart = () => {
-    setCart([]);
-  };
+    case 'UPDATE_QUANTITY':
+      return {
+        ...state,
+        items: state.items.map(item =>
+          item.id === action.payload.id
+            ? { ...item, quantity: action.payload.quantity }
+            : item
+        ),
+      };
 
-  const totalPrice = cart.reduce(
-    (total, item) => total + (item.price * item.quantity),
-    0
-  );
+    case 'CLEAR_CART':
+      return initialState;
+
+    default:
+      return state;
+  }
+};
+
+export const CartProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(cartReducer, {
+    ...initialState,
+    items: JSON.parse(localStorage.getItem('cart')) || [],
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(state.items));
+  }, [state.items]);
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        clearCart,
-        totalPrice
-      }}
-    >
+    <CartContext.Provider value={{ state, dispatch }}>
       {children}
     </CartContext.Provider>
   );
@@ -78,7 +70,7 @@ export const CartProvider = ({ children }) => {
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error('useCart must be used within CartProvider');
   }
   return context;
 };
